@@ -16,29 +16,47 @@ Note: The dataset was cleaned by removing not needed columns using Excel.
 ```r
 library(readr)
 Bank <- read.csv("BankChurners.csv")
-Checking the contents of the data
+#Checking the contents of the data
 head(Bank)
 ```
-##      Attrition_Flag Customer_Age Gender Dependent_count Education_Level
-## 1 Existing Customer           45      M               3     High School
-## 2 Existing Customer           49      F               5        Graduate
-## 3 Existing Customer           51      M               3        Graduate
-## 4 Existing Customer           40      F               4     High School
-## 5 Existing Customer           40      M               3      Uneducated
-## 6 Existing Customer           44      M               2        Graduate
-##   Marital_Status Income_Category Card_Category Credit_Limit Total_Revolving_Bal
-## 1        Married     $60K - $80K          Blue        12691                 777
-## 2         Single  Less than $40K          Blue         8256                 864
-## 3        Married    $80K - $120K          Blue         3418                   0
-## 4        Unknown  Less than $40K          Blue         3313                2517
-## 5        Married     $60K - $80K          Blue         4716                   0
-## 6        Married     $40K - $60K          Blue         4010                1247
-##   Total_Trans_Amt
-## 1            1144
-## 2            1291
-## 3            1887
-## 4            1171
-## 5             816
-## 6            1088
+
+| Attrition_Flag     | Customer_Age | Gender | Dependent_count | Education_Level | Marital_Status | Income_Category | Card_Category | Credit_Limit | Total_Revolving_Bal | Total_Trans_Amt |
+|--------------------|--------------|--------|-----------------|-----------------|----------------|-----------------|---------------|--------------|---------------------|-----------------|
+| Existing Customer  | 45           | M      | 3               | High School     | Married        | $60K - $80K     | Blue          | 12691        | 777                 | 1144            |
+| Existing Customer  | 49           | F      | 5               | Graduate        | Single         | Less than $40K  | Blue          | 8256         | 864                 | 1291            |
+| Existing Customer  | 51           | M      | 3               | Graduate        | Married        | $80K - $120K    | Blue          | 3418         | 0                   | 1887            |
+| Existing Customer  | 40           | F      | 4               | High School     | Unknown        | Less than $40K  | Blue          | 3313         | 2517                | 1171            |
+| Existing Customer  | 40           | M      | 3               | Uneducated      | Married        | $60K - $80K     | Blue          | 4716         | 0                   | 816             |
+| Existing Customer  | 44           | M      | 2               | Graduate        | Married        | $40K - $60K     | Blue          | 4010         | 1247                | 1088            |
+
+## SUMMARY OF THE DATA SET
+
+```r
+summary(Bank)
+```
+
+| Attrition_Flag    | Customer_Age | Gender | Dependent_count | Education_Level | Marital_Status | Income_Category  | Card_Category | Credit_Limit | Total_Revolving_Bal | Total_Trans_Amt |
+|-------------------|--------------|--------|-----------------|-----------------|----------------|------------------|---------------|--------------|---------------------|-----------------|
+| Existing Customer | 45           | M      | 3               | High School     | Married        | $60K - $80K      | Blue          | 12691        | 777                 | 1144            |
+| Existing Customer | 49           | F      | 5               | Graduate        | Single         | Less than $40K   | Blue          | 8256         | 864                 | 1291            |
+| Existing Customer | 51           | M      | 3               | Graduate        | Married        | $80K - $120K     | Blue          | 3418         | 0                   | 1887            |
+| Existing Customer | 40           | F      | 4               | High School     | Unknown        | Less than $40K   | Blue          | 3313         | 2517                | 1171            |
+| Existing Customer | 40           | M      | 3               | Uneducated      | Married        | $60K - $80K      | Blue          | 4716         | 0                   | 816             |
+| Existing Customer | 44           | M      | 2               | Graduate        | Married        | $40K - $60K      | Blue          | 4010         | 1247                | 1088            |
+
+| Variable            | Length | Min   | 1st Qu. | Median | Mean  | 3rd Qu. | Max   | Class   | Mode           |
+|---------------------|--------|-------|---------|--------|-------|---------|-------|---------|----------------|
+| Attrition_Flag      | 10127  |       |         |        |       |         |       | character | character    |
+| Customer_Age        | 10127  | 26.00 | 41.00   | 46.00  | 46.33 | 52.00   | 73.00 | character | character    |
+| Gender              | 10127  |       |         |        |       |         |       | character | character    |
+| Dependent_count     | 10127  | 0.000 | 1.000   | 2.000  | 2.346 | 3.000   | 5.000 | character | character    |
+| Education_Level     | 10127  |       |         |        |       |         |       | character | character    |
+| Marital_Status      | 10127  |       |         |        |       |         |       | character | character    |
+| Income_Category     | 10127  |       |         |        |       |         |       | character | character    |
+| Card_Category       | 10127  |       |         |        |       |         |       | character | character    |
+| Credit_Limit        | 10127  | 1438  | 2555    | 4549   | 8632  | 11068   | 34516 | numeric  | numeric       |
+| Total_Revolving_Bal | 10127  | 0     | 359     | 1276   | 1163  | 1784    | 2517  | numeric  | numeric       |
+| Total_Trans_Amt     | 10127  | 510   | 2156    | 3899   | 4404  | 4741    | 18484 | numeric  | numeric       |
+
 
 
