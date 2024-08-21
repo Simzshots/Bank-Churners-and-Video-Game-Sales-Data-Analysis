@@ -9,11 +9,36 @@ The dataset contains a bunch of information about customers, including their age
 I aim to provide the bank’s management with clear and practical information, helping them make informed decisions to improve customer satisfaction and retention.
 The dataset is a bank dataset which contains information about customers of a bank, including their age, gender, marital status, credit limit, and more as well as their attrition status. The data set has 9 variables, and 10,127 observations so parametric tests would be used to investigate the dataset without normality checks because the sample size is large (n>30). I am digging into this data to determine why customers stop using their credit card services.
 
-Importing the Bank Churners dataset (Dataset 1)
+_Importing the Bank Churners dataset (Dataset 1)_
 
 Note: The dataset was cleaned by removing not needed columns using Excel.
 
+```r
 library(readr)
 Bank <- read.csv("BankChurners.csv")
 Checking the contents of the data
 head(Bank)
+```
+##      Attrition_Flag Customer_Age Gender Dependent_count Education_Level
+## 1 Existing Customer           45      M               3     High School
+## 2 Existing Customer           49      F               5        Graduate
+## 3 Existing Customer           51      M               3        Graduate
+## 4 Existing Customer           40      F               4     High School
+## 5 Existing Customer           40      M               3      Uneducated
+## 6 Existing Customer           44      M               2        Graduate
+##   Marital_Status Income_Category Card_Category Credit_Limit Total_Revolving_Bal
+## 1        Married     $60K - $80K          Blue        12691                 777
+## 2         Single  Less than $40K          Blue         8256                 864
+## 3        Married    $80K - $120K          Blue         3418                   0
+## 4        Unknown  Less than $40K          Blue         3313                2517
+## 5        Married     $60K - $80K          Blue         4716                   0
+## 6        Married     $40K - $60K          Blue         4010                1247
+##   Total_Trans_Amt
+## 1            1144
+## 2            1291
+## 3            1887
+## 4            1171
+## 5             816
+## 6            1088
+
+
