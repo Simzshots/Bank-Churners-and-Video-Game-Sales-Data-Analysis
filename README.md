@@ -163,7 +163,7 @@ library("lattice")
 dotplot(Credit_Limit ~ Card_Category , data = Bank)
 ```
 
-![Box Plot](images/6.png)
+![Dot Plot](images/6.png)
 
 ```r
 bartlett.test(Credit_Limit ~ Card_Category , data = Bank)
@@ -192,7 +192,229 @@ _One-way analysis of means (not assuming equal variances)
 _RESULTS_: The F-statistic is 1232.1 and the p-value is < 2.2e-16.
 _Inference_: Since the p value is very low (< the significance level 0.05), the null hypothesis that the credit limit of the different types of cards are equal will be rejected. Hence, accepting the alternative hypothesis that the different card categories have different credit limits.
 
+## LINEAR REGRESSION
+### CORRELATION
+*QUESTION*: Is there a discernible correlation between customers’ credit limits, customer’s age and their total transaction amounts?
 
+```r
+library(corrplot)
+## corrplot 0.92 loaded
+#First, a check for correlation between both variables
+cormat<-cor(Bank[, c("Total_Trans_Amt", "Credit_Limit", "Customer_Age")])
+corrplot(cormat, method = "color", type="upper", addCoef.col="grey",tl.col="black")
+```
+
+![Correlation Heatmap](images/7.png)
+
+```r
+plot(Bank$Total_Trans_Amt,Bank$Credit_Limit, main = "Scatter plot of Total Transaction Amount against Credit Limit", col = "blue")
+abline(a = 0, b = 1, col = "red")
+```
+
+![Scatter Plot](images/8.png)
+
+```r
+plot(Bank$Total_Trans_Amt,Bank$Customer_Age, main = "Scatter plot of Total Transaction Amount against Customer Age", col = "red")
+abline(Bank$Total_Trans_Amt,Bank$Customer_Age, col = "red")
+```
+
+![Scatter Plot](images/9.png)
+
+_Inference_: The result of the correlation test shows that there is a positive correlation between the credit limit and the total transaction amount which makes sense in the real world as it is expected that as the credit limit increases, the total transaction amount would increase because there’s more to spend. Also, there is a very weak negative correlation between the customer age and the total transaction limit. But the dot plots show that there is no clear linear pattern between response variables (i.e no multi-collinearity) and the target variable so more tests have to be done to conclude. Since, there is no major correlation between the response variables, I will go ahead to use both of them.
+
+*PROBLEM STATEMENT*: The bank is curious to know if customers’ credit limits and customer’s age can determine their total transaction amounts.
+_AIM_: Using a linear model to see whether the credit limit and customer age determine the the total transaction amount, to see if the credit limit and age play a role in the usage of the cards.
+
+_ASSUMPTIONS_:
+-  Null Hypothesis (H0): The credit limit and customer age do not contribute statistically to determine the total transaction amount
+-  Alternate Hypothesis (H1): The credit limit and customer age contribute statistically to determine the total transaction amount
+
+```r
+Reg <- lm(Bank$Total_Trans_Am ~ Bank$Credit_Limit+Bank$Customer_Age)
+summary(Reg)
+```
+*Output*
+_Call:
+ lm(formula = Bank$Total_Trans_Am ~ Bank$Credit_Limit + Bank$Customer_Age)_
+ 
+ _Residuals:
+     Min      1Q  Median      3Q     Max_ 
+
+ _-5377.1 -2169.7  -494.4   651.1 13997.3_ 
+ 
+ _Coefficients:
+                     Estimate Std. Error t value Pr(>|t|)    
+ (Intercept)        4.770e+03  1.973e+02  24.175  < 2e-16 ***_
+
+ _Bank$Credit_Limit  6.423e-02  3.655e-03  17.571  < 2e-16 ***_
+ 
+ _Bank$Customer_Age -1.986e+01  4.144e+00  -4.793 1.67e-06 ***_
+
+
+ _Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1_
+ 
+ _Residual standard error: 3343 on 10124 degrees of freedom_
+ 
+ _Multiple R-squared:  0.03169,    Adjusted R-squared:  0.0315_ 
+ 
+ _F-statistic: 165.7 on 2 and 10124 DF,  p-value: < 2.2e-16_
+
+_RESULTS_: The linear model gives a range of results, and they are as follows: The intercept is 4.770e+03, the credit limit estimate is 6.423e-02 and the p-value is < 2.2e-16 while the customer age estimate is -1.986e+01 and the p-value is 1.67e-06.
+_Inference_: The null hypothesis should clearly be rejected because the p-value<2.2e-16 which is way less than the 0.001 significance level. i.e I do not have enough evidence to say that the credit limit and customer age are not statistically significant determinants for the total transaction amount.
+
+## CHI-SQUARE TEST
+*PROBLEM STATEMENT*: Is there an independence between the attrition flag and the marital status of the customers?
+_AIM_: Using a Chi-squared test to see if there is an independence between the attrition flag and the marital status of the customers.
+
+_ASSUMPTIONS_:
+-  Null Hypothesis (H0): There is an independence between the marital status and attrition flag of customers.
+-  Alternate Hypothesis (H1): There is no independence between the marital status and attrition flag of customers.
+
+```r
+# Creating a contingency table
+contingency_table <- table(Bank$Attrition_Flag, Bank$Marital_Status)
+head(contingency_table)
+```
+
+*Output*
+|                       | Divorced | Married | Single | Unknown |
+|-----------------------|----------|---------|--------|---------|
+| **Attrited Customer** |      121 |     709 |    668 |     129 |
+| **Existing Customer** |      627 |    3978 |   3275 |     620 |
+
+```r
+#Checking for the expected frequencies
+expectedFreq <- chisq.test(contingency_table)$expected
+print(expectedFreq)
+```
+
+*Output*
+
+|                       | Divorced  | Married   | Single   | Unknown  |
+|-----------------------|-----------|-----------|----------|----------|
+| **Attrited Customer** | 120.1734  | 753.0117  | 633.4809 | 120.3341 |
+| **Existing Customer** | 627.8266  | 3933.9883 | 3309.5191| 628.6659 |
+
+Since the expected frequencies are greater than 5, I will go ahead to test for independence.
+
+```r
+# Performing the chi-squared test
+chisq.test(contingency_table, confint(level = 0.95))
+```
+
+*Output*
+_Pearson's Chi-squared test_
+
+ _data:  contingency_table_
+ 
+ _X-squared = 6.0561, df = 3, p-value = 0.1089_
+
+_RESULTS_: The Chi-squared testgives a range of results, and they are as follows: The x-squared value is 6.0561 and the p-value is 0.1089.
+_Inference_: Since the p-value is 0.1089 which is greater than the significance level 0.05, the null hypothesis Ho, that there an independence between the marital status and attrition flag of customers, cannot be rejected due to lack of evidence.
+
+## LOGISTIC REGRESSION
+*PROBLEM STATEMENT*: Are the customer age, total transaction amount, gender, card category and the credit limit all statistically significant in predicting the log odds of a customer’s attrition?
+
+_ASSUMPTIONS_
+-  _Null Hypothesis (H0)_: The customer age, total transaction amount, gender, card category and credit limit are not statistically significant in predicting the log odds of a customer’s attrition.
+-  _Alternate Hypothesis (H1)_: The customer age, total transaction amount, gender, card category and credit limit are all statistically significant in predicting the log odds of a customer’s attrition.
+
+```r
+# Specifying the categorical variables
+Genderf <- factor(Bank$Gender, levels = c("M", "F"))
+Card_Categoryf <- factor(Bank$Card_Category, levels = c("Blue", "Gold", "Platinum", "Silver"))
+Attrition_Flagf <- factor(Bank$Attrition_Flag, levels = c("Existing Customer", "Attrited Customer"))
+
+# Logistic regression model
+fit <- glm(Attrition_Flagf ~ Customer_Age + Total_Trans_Amt + Genderf + Card_Categoryf + Credit_Limit, 
+           data = Bank, 
+           family = "binomial")
+
+# Summary of the logistic regression model
+summary(fit)
+```
+
+*Output*
+_Call:
+glm(formula = Attrition_Flagf ~ Customer_Age + Total_Trans_Amt + 
+     Genderf + Card_Categoryf + Credit_Limit, family = "binomial", 
+     data = Bank)_
+ 
+ _Deviance Residuals: 
+     Min       1Q   Median       3Q      Max  
+ -1.3999  -0.6362  -0.5507  -0.3344   2.7004_  
+ 
+ _Coefficients:
+                          Estimate Std. Error z value Pr(>|z|)_    
+ _(Intercept)            -1.027e+00  1.750e-01  -5.871 4.33e-09 ***_
+ 
+ _Customer_Age            3.072e-03  3.368e-03   0.912  0.36165_    
+ 
+ _Total_Trans_Amt        -2.575e-04  1.553e-05 -16.576  < 2e-16 ***_
+ 
+ _GenderfF                2.770e-01  6.273e-02   4.416 1.01e-05 ***_
+ 
+ _Card_CategoryfGold      8.787e-01  2.749e-01   3.196  0.00139 **_ 
+ 
+ _Card_CategoryfPlatinum  1.608e+00  5.932e-01   2.711  0.00671 **_ 
+ 
+ _Card_CategoryfSilver    2.949e-01  1.465e-01   2.013  0.04414 *_
+
+
+_Credit_Limit           -2.407e-07  4.134e-06  -0.058  0.95358_    
+
+ _Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1_
+ 
+ _(Dispersion parameter for binomial family taken to be 1)_
+ 
+ _Null deviance: 8927.2  on 10126  degrees of freedom
+ Residual deviance: 8480.0  on 10119  degrees of freedom
+ AIC: 8496_
+ 
+ _Number of Fisher Scoring iterations: 6_
+
+_RESULTS_: The logistic regression gives a range of results, and they are as follows: The intercept is -1.025e+00 at the 0.001 significance level, the p-value of customer age is 0.485021 at the 0.001 significance level, the p-value of the total transaction amount is < 2.2e-16 at the 0.001 significance level,  the p-value of gender compared to female (reference group is male) is 0.000319 at the 0.001 significance level, the p-value of credit limit is 0.916083 at the 0.001 significance level, the p-value of the card category compared to gold (reference group is blue) is 0.021446 at the 0.05 significance level, the p-value of card category compared to platinum (reference group is blue) is 0.001027 at the 0.01 significance level and the p-value of card category compared to silver (reference group is blue) is 0.012628 at the 0.05 significance level.
+
+_Inference_: Since p-value = 0.485>0.001, the result shows that the age of the customers has no statistically significant effect on the chance of attrition. On the other hand, total transaction amount stands out as a critical component, showing a highly significant negative connection (p-value < 0.001) with attrition, suggesting that larger transaction amounts are linked to reduced attrition odds. The log-odds of attrition are significantly higher for female gender than for male reference group, with a highly significant p-value of less than 0.001 and a positive coefficient of 0.2557. Furthermore, compared to the reference category (Blue), the card categories Gold, Platinum, and Silver show positive and significant coefficients, indicating higher log-odds of attrition. On the other hand, credit limit does not show a statistically significant effect on the log-odds of attrition (p-value = 0.916). Overall, these findings shed light on the influential factors contributing to customer attrition within the dataset.
+
+---
+
+## Importing the Video Game Sales dataset
+# VIDEO GAME SALES DATASET:
+The dataset encapsulates a wealth of information about video game sales, spanning continents, genres, platforms, and publishers. From the amount of sales in North America and Europe to the global sales figure, this dataset provides a holistic view of the gaming landscape.
+```r
+library(readr)
+Game <- read.csv("VidGameSaless.csv")
+#Checking the contents of the data
+head(Game)
+```
+
+*Output*
+| Rank | Name                     | Platform | Year | Genre        | Publisher | NA_Sales | EU_Sales | JP_Sales | Other_Sales | Global_Sales |
+|------|--------------------------|----------|------|--------------|-----------|----------|----------|----------|-------------|--------------|
+| 1    | Wii Sports               | Wii      | 2006 | Sports       | Nintendo  | 41.49    | 29.02    | 3.77     | 8.46        | 82.74        |
+| 2    | Super Mario Bros.        | NES      | 1985 | Platform     | Nintendo  | 29.08    | 3.58     | 6.81     | 0.77        | 40.24        |
+| 3    | Mario Kart Wii           | Wii      | 2008 | Racing       | Nintendo  | 15.85    | 12.88    | 3.79     | 3.31        | 35.82        |
+| 4    | Wii Sports Resort        | Wii      | 2009 | Sports       | Nintendo  | 15.75    | 11.01    | 3.28     | 2.96        | 33.00        |
+| 5    | Pokemon Red/Pokemon Blue | GB       | 1996 | Role-Playing | Nintendo  | 11.27    | 8.89     | 10.22    | 1.00        | 31.37        |
+| 6    | Tetris                   | GB       | 1989 | Puzzle       | Nintendo  | 23.20    | 2.26     | 4.22     | 0.58        | 30.26        |
+
+Note that the Sales amounts are in millions.
+
+```r
+#Checking the summary of the dataset
+summary(Game)
+```
+
+*Output*
+| Statistic | Rank              | Name              | Platform          | Year              | Genre          | Publisher       | NA_Sales       | EU_Sales       | JP_Sales       | Other_Sales    | Global_Sales   |
+|-----------|-------------------|-------------------|-------------------|-------------------|-----------------|-----------------|----------------|----------------|----------------|----------------|----------------
+| Min.      | 1.0               | Length:2624       | Length:2624       | Length:2624       | Length:2624    | Length:2624     | 0.000          | 0.0000         | 0.000          | 0.0000         | 0.790          
+| 1st Qu.   | 657.8             | Class :character  | Class :character  | Class :character  | Class :character| Class :character| 0.470          | 0.2100         | 0.000          | 0.0700         | 1.050         
+| Median    | 1313.5            | Mode  :character  | Mode  :character  | Mode  :character  | Mode  :character| Mode  :character| 0.750          | 0.4200         | 0.020          | 0.1200         | 1.460         
+| Mean      | 1313.3            |                   |                   |                   |                |                 | 1.155          | 0.6857         | 0.298          | 0.2215         | 2.360          
+| 3rd Qu.   | 1969.2            |                   |                   |                   |                |                 | 1.262          | 0.7625         | 0.260          | 0.2200         | 2.382          
+| Max.      | 2625.0            |                   |                   |                   |                |                 | 41.490         | 29.0200        | 10.220         | 10.5700        | 82.740         
 
 
 
