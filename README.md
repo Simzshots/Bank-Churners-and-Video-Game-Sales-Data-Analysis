@@ -1,4 +1,4 @@
-# Crime-Analysis-In-Derbyshire
+# Bank Churners and Video Game Sales Data Analysis
 
 ## INTRODUCTION
 In the realm of banking, keeping customers satisfied and preventing them from leaving is crucial. This report dives into a dataset focused on customers who have stopped using the credit card services of a bank. The goal is to not only predict potential churn but also understand the factors that contribute to it, using a mix of predictive modelling and statistical methods.
