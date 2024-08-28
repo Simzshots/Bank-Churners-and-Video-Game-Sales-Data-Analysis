@@ -89,6 +89,8 @@ plot(density(Bank$Customer_Age), main = "Density of Age Spread", col="red")
 ```r
 boxplot(Bank$Customer_Age, main = "Boxplot of Customers' Age", col = "red")
 ```
+*Output*
+
 ![Box Plot](images/3.png)
 
 _AIM_: I aim to use a one sample t-test to see if the mean customer age is statistically different from 45 at the 95% confidence interval.
