@@ -422,7 +422,7 @@ glm(formula = Attrition_Flagf ~ Customer_Age + Total_Trans_Amt +
 
 _Credit_Limit           -2.407e-07  4.134e-06  -0.058  0.95358_    
 
- _Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1_
+ _Signif. codes:  0 '*** 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1_
  
  _(Dispersion parameter for binomial family taken to be 1)_
  
