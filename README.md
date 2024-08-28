@@ -19,6 +19,7 @@ Bank <- read.csv("BankChurners.csv")
 #Checking the contents of the data
 head(Bank)
 ```
+*Output*
 
 | Attrition_Flag     | Customer_Age | Gender | Dependent_count | Education_Level | Marital_Status | Income_Category | Card_Category | Credit_Limit | Total_Revolving_Bal | Total_Trans_Amt |
 |--------------------|--------------|--------|-----------------|-----------------|----------------|-----------------|---------------|--------------|---------------------|-----------------|
@@ -34,6 +35,7 @@ head(Bank)
 ```r
 summary(Bank)
 ```
+*Output*
 
 | Attrition_Flag    | Customer_Age | Gender | Dependent_count | Education_Level | Marital_Status | Income_Category  | Card_Category | Credit_Limit | Total_Revolving_Bal | Total_Trans_Amt |
 |-------------------|--------------|--------|-----------------|-----------------|----------------|------------------|---------------|--------------|---------------------|-----------------|
@@ -70,6 +72,8 @@ The data set has no missing values with 11 variables and 10,127 observations so 
 ```r
 hist(Bank$Customer_Age,xlab = "Age", ylab ="Frequency", main = "Histogram of Customer Ages", col = "blue")
 ```
+*Output*
+
 ![Histogram](images/1.png)
 
 _Inference_: From the histogram, the majority of the clients are around 40-50 years old.
@@ -78,6 +82,8 @@ _Inference_: From the histogram, the majority of the clients are around 40-50 ye
 ```r
 plot(density(Bank$Customer_Age), main = "Density of Age Spread", col="red")
 ```
+*Output*
+
 ![Density Plot](images/2.png)
 
 ```r
@@ -123,6 +129,8 @@ _Inference_: Since the t-statistic is not in the confidence interval and the p-v
 ```r
 boxplot(Credit_Limit ~ Gender, data = Bank, main = "Credit Limit by Gender", col = c("pink","skyblue"))
 ```
+*Output*
+
 ![Box Plot](images/4.png)
 
 ```r
@@ -130,6 +138,7 @@ bartlett.test(Bank$Credit_Limit ~ Bank$Gender)
 ```
 
 *Output*
+
 _Bartlett test of homogeneity of variances_
 
  _data:  Bank$Credit_Limit by Bank$Gender_
@@ -183,11 +192,15 @@ boxplot(Credit_Limit ~ Card_Category , data = Bank, main = "Credit Limit by Card
 library("lattice")
 ```
 
+*Output*
+
 ![Box Plot](images/5.png)
 
 ```r
 dotplot(Credit_Limit ~ Card_Category , data = Bank)
 ```
+
+*Output*
 
 ![Dot Plot](images/6.png)
 
@@ -196,6 +209,7 @@ bartlett.test(Credit_Limit ~ Card_Category , data = Bank)
 ```
 
 *Output*
+
 _Bartlett test of homogeneity of variances_
 
  _data:  Credit_Limit by Card_Category_
@@ -215,6 +229,7 @@ oneway.test(Bank$Credit_Limit~Bank$Card_Category, var.equal = FALSE) #Using a We
 ```
 
 *Output*
+
 _One-way analysis of means (not assuming equal variances)_
 
  _data:  Bank$Credit_Limit and Bank$Card_Category_
@@ -237,12 +252,16 @@ cormat<-cor(Bank[, c("Total_Trans_Amt", "Credit_Limit", "Customer_Age")])
 corrplot(cormat, method = "color", type="upper", addCoef.col="grey",tl.col="black")
 ```
 
+*Output*
+
 ![Correlation Heatmap](images/7.png)
 
 ```r
 plot(Bank$Total_Trans_Amt,Bank$Credit_Limit, main = "Scatter plot of Total Transaction Amount against Credit Limit", col = "blue")
 abline(a = 0, b = 1, col = "red")
 ```
+
+*Output*
 
 ![Scatter Plot](images/8.png)
 
@@ -312,6 +331,7 @@ head(contingency_table)
 ```
 
 *Output*
+
 |                       | Divorced | Married | Single | Unknown |
 |-----------------------|----------|---------|--------|---------|
 | **Attrited Customer** |      121 |     709 |    668 |     129 |
@@ -338,6 +358,7 @@ chisq.test(contingency_table, confint(level = 0.95))
 ```
 
 *Output*
+
 _Pearson's Chi-squared test_
 
  _data:  contingency_table_
@@ -370,6 +391,7 @@ summary(fit)
 ```
 
 *Output*
+
 _Call:
 glm(formula = Attrition_Flagf ~ Customer_Age + Total_Trans_Amt + 
      Genderf + Card_Categoryf + Credit_Limit, family = "binomial", 
@@ -425,6 +447,7 @@ head(Game)
 ```
 
 *Output*
+
 | Rank | Name                     | Platform | Year | Genre        | Publisher | NA_Sales | EU_Sales | JP_Sales | Other_Sales | Global_Sales |
 |------|--------------------------|----------|------|--------------|-----------|----------|----------|----------|-------------|--------------|
 | 1    | Wii Sports               | Wii      | 2006 | Sports       | Nintendo  | 41.49    | 29.02    | 3.77     | 8.46        | 82.74        |
@@ -442,6 +465,7 @@ summary(Game)
 ```
 
 *Output*
+
 | Statistic | Rank              | Name              | Platform          | Year              | Genre          | Publisher       | NA_Sales       | EU_Sales       | JP_Sales       | Other_Sales    | Global_Sales   |
 |-----------|-------------------|-------------------|-------------------|-------------------|-----------------|-----------------|----------------|----------------|----------------|----------------|----------------
 | Min.      | 1.0               | Length:2624       | Length:2624       | Length:2624       | Length:2624    | Length:2624     | 0.000          | 0.0000         | 0.000          | 0.0000         | 0.790          
@@ -535,6 +559,7 @@ wilcox.test(Game$NA_Sales,Game$EU_Sales,alternative = "greater",conf.int = TRUE)
 ```
 
 *Output*
+
 _Wilcoxon rank sum test with continuity correction_
 
 _data:  Game$NA_Sales and Game$EU_Sales_
@@ -585,6 +610,7 @@ results_df <- data.frame(Year = c(2011, 2012, 2013, 2014), p_value = p_values)
 print(results_df)
 ```
 *Output*
+
 | Year | p_value       |
 |------|---------------|
 | 2011 | 1.287281e-17  |
@@ -605,6 +631,7 @@ kruskal.test(Global_Sales ~ Year, data = subset_data)
 ```
 
 *Output*
+
  _Kruskal-Wallis rank sum test_
 
  _data:  Global_Sales by Year_
@@ -612,6 +639,7 @@ kruskal.test(Global_Sales ~ Year, data = subset_data)
  _Kruskal-Wallis chi-squared = 7.3606, df = 3, p-value = 0.06125_
 
 _RESULTS_: The Kruskal-Wallis test gives that the Kruskal-Wallis chi-squared is 7.3606 and a p-value which is 0.06125 at the 0.05 significance level.
+
 _Inference_: In this case, the p-value is 0.06125, which is slightly larger than the common significance level of 0.05. Therefore, I choose not to reject the null hypothesis at the 0.05 significance level.
  
 ## REFERENCES
