@@ -417,6 +417,173 @@ summary(Game)
 | Max.      | 2625.0            |                   |                   |                   |                |                 | 41.490         | 29.0200        | 10.220         | 10.5700        | 82.740         
 
 
+The data set has a total of 11 variables and 2,624 observations. This suggests that the normality checks using a Shapiro Test will be applicable since the sample size is < 3,000.
+
+
+## WILCOXON RANK SUM TEST
+*PROBLEM STATEMENT*: Are the video game sales in North America (NA) and Europe (EU) equal?
+*EXPLORATORY DATA ANALYSIS*: A visual representation of the NA sales and EU sales
+
+```r
+hist(Game$NA_Sales, main =   "Histogram of games sales in North America(NA)")
+```
+*Output*
+
+![Histogram](images/10.png)
+
+```r
+hist(Game$EU_Sales, main =   "Histogram of games sales in Europe(EU)")
+```
+
+*Output*
+
+![Histogram](images/10.png)
+
+_Inference_: From the histograms, it is clear that the distributions of the sales in both NA and EU are not normal but right skewed. Using Shapiro test and Q-Q plots to check the normality of the NA sales and EU sales.
+
+```r
+shapiro.test(Game$NA_Sales)
+```
+
+*Output*
+
+_Shapiro-Wilk normality test_
+ 
+_data:  Game$NA_Sales_
+
+_W = 0.42281, p-value < 2.2e-16_
+
+_shapiro.test(Game$EU_Sales)_
+ 
+_Shapiro-Wilk normality test_
+ 
+_data:  Game$EU_Sales_
+
+_W = 0.46304, p-value < 2.2e-16_
+
+```r
+qqnorm(Game$NA_Sales, col="purple", main = "Q-Q Plot of NA Sales")
+qqline(Game$NA_Sales, col="black")
+```
+*Output*
+
+![QQ Plot](images/11.png)
+
+```r
+qqnorm(Game$EU_Sales, col="red",main = "Q-Q Plot of EU Sales")
+qqline(Game$EU_Sales, col="black")
+```
+
+*Output*
+
+![QQ Plot](images/13.png)
+
+_Inference_: Since the p-values of both tests show that p < the significance level 0.05 and the Q-Q plots deviating from a straight line, we conclude that the NA sales and EU sales are not normally distributed, therefore being appropriate for a non-parametric test.
+
+Box plots to check the distribution of sales in NA and EU
+```r
+boxplot((Game$NA_Sales), (Game$EU_Sales), names = c("NA_Sales", "EU_Sales"),ylim = c(0, 9.5), main = "Boxplots of NA and EU sales")
+```
+
+*Output*
+
+![Box Plot](images/14.png)
+
+_Inference_: From the box plots, it is obvious that the median of the NA sales are greater than that of the EU sales, which could imply that the mean of NA sales could be greater too.
+_AIM_: Using a Wilcoxon rank-sum test to check the null hypothesis that the video game sales in NA and EU are equal.
+_ASSUMPTIONS_:
+-   _Null Hypothesis (H0)_: The video game sales in NA and EU are equal.
+-  	_Alternate Hypothesis (H1): The video game sales in NA are greater than those in EU.
+
+```r
+wilcox.test(Game$NA_Sales,Game$EU_Sales,alternative = "greater",conf.int = TRUE)
+```
+
+*Output*
+_Wilcoxon rank sum test with continuity correction_
+
+_data:  Game$NA_Sales and Game$EU_Sales_
+ 
+ _W = 4679332, p-value < 2.2e-16_
+ 
+ _alternative hypothesis: true location shift is greater than 0_
+ 
+ _95 percent confidence interval:_
+ 
+  _0.290025      Inf_
+ 
+ _sample estimates:_
+ 
+ _difference in location_ 
+              
+ _0.3100372_
+
+_RESULTS_: The Wilcoxon Rank Sum test gives a W-statistic of 4679332 in a confidence interval of -0.290025 to 0.290025 and a p-value which is <2.2e-16 at the 0.05 significance level.
+_Inference_: Since the p-value < the significance level 0.05, the null hypothesis is rejected. Suggesting that there is evidence that the sales in North America are greater than the sales in Europe.
+
+
+## KRUSKALL-WALLIS TEST
+*PROBLEM STATEMENT*: Is there a significant difference in the global sales from 2011 to 2014?
+*EXPLORATORY DATA ANALYSIS*: Normality tests on the global sales from 2011 to 2014
+
+_ASSUMPTIONS_:
+-  _Null Hypothesis (H0)_: Global sales across the years 2011, 2012, 2013, and 2014 are normally distributed
+-  _Alternative Hypothesis (H1)_: Global sales across the years 2011, 2012, 2013, and 2014 are not normally distributed
+
+```r
+# Filtering data for the years 2011 to 2014
+subset_data <- subset(Game, Year %in% c(2011, 2012, 2013, 2014))
+
+# Creating an empty vector to store p-values
+p_values <- numeric()
+
+# Looping through each year and perform the Shapiro-Wilk test
+for (year in c(2011, 2012, 2013, 2014)) {
+  subset_sales <- subset_data$Global_Sales[subset_data$Year == year]
+  shapiro_result <- shapiro.test(subset_sales)
+  p_values <- c(p_values, shapiro_result$p.value)
+}
+
+# Creating a data frame with the results
+results_df <- data.frame(Year = c(2011, 2012, 2013, 2014), p_value = p_values)
+# Displaying the results
+print(results_df)
+```
+*Output*
+| Year | p_value       |
+|------|---------------|
+| 2011 | 1.287281e-17  |
+| 2012 | 6.394927e-17  |
+| 2013 | 1.258310e-17  |
+| 2014 | 2.551033e-12  |
+
+_Inference_: From the results, the p values for all the year are < significance level of 0.05 and thus, the null hypothesis that they are normally distributed is rejected.
+
+_AIM_: I aim to use a Kruskall-Wallis test to check if there is a significant difference in global sales from 2011 to 2014.
+
+_ASSUMPTIONS_:
+-  _Null Hypothesis (H0)_: There is no difference in global sales across the years 2011, 2012, 2013, and 2014.
+-  _Alternative Hypothesis (H1)_: There is a significant difference in global sales across at least one of the years.
+
+```r
+kruskal.test(Global_Sales ~ Year, data = subset_data)
+```
+
+*Output*
+ _Kruskal-Wallis rank sum test_
+
+ _data:  Global_Sales by Year_
+
+ _Kruskal-Wallis chi-squared = 7.3606, df = 3, p-value = 0.06125_
+
+_RESULTS_: The Kruskal-Wallis test gives that the Kruskal-Wallis chi-squared is 7.3606 and a p-value which is 0.06125 at the 0.05 significance level.
+_Inference_: In this case, the p-value is 0.06125, which is slightly larger than the common significance level of 0.05. Therefore, I choose not to reject the null hypothesis at the 0.05 significance level.
+ 
+## REFERENCES
+1.      Chauhan, A. (2022) Credit card customers prediction, Kaggle. Available at: https://www.kaggle.com/datasets/whenamancodes/credit-card-customers-prediction (Accessed: 11 November 2023).
+2.      GregorySmith (2016) Video game sales, Kaggle. Available at: https://www.kaggle.com/datasets/gregorut/videogamesales (Accessed: 11 November 2023).
+
+
 
 
 
